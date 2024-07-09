@@ -1,6 +1,7 @@
 package sorokin.dev.eventmanager.users.domain;
 
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sorokin.dev.eventmanager.security.JwtTokenManager;
@@ -33,5 +34,13 @@ public class AuthenticationService {
         }
 
         return jwtTokenManager.generateToken(user);
+    }
+
+    public User getCurrentAuthenticatedUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            throw new IllegalStateException("Authentication not present");
+        }
+        return (User) authentication.getPrincipal();
     }
 }
